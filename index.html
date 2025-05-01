@@ -79,11 +79,18 @@
         });
 
         // Добавляем билеты при просмотре рекламы
+       
         async function addPromoTickets() {
-            await addTickets(telegramId, 10); // Добавляем 10 билетов
-            const newBalance = await getBalance(telegramId);
-            balanceElement.textContent = newBalance; // Обновляем отображение баланса
-        }
+    console.log('Кнопка нажата');
+    try {
+        await addTickets(telegramId, 10); // Добавляем 10 билетов
+        const newBalance = await getBalance(telegramId);
+        console.log(`Новый баланс: ${newBalance}`);
+        balanceElement.textContent = newBalance; // Обновляем отображение баланса
+    } catch (error) {
+        console.error('Ошибка при обновлении билетов:', error);
+    }
+            }
 
         // Подключаем к кнопке
         document.querySelector('.task-button').addEventListener('click', addPromoTickets);
