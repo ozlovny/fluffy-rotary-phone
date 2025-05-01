@@ -13,6 +13,7 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyenB6c3N5Zm5tY3lyZnR5ZmVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3NjY5OTAsImV4cCI6MjA2MTM0Mjk5MH0.o2Cem8X4W_H3giAxqf0HqoZFC-v5iIQV2obDmAeQBZ8';        // Вставьте ваш API Key
         const supabase = createClient(supabaseUrl, supabaseKey);
 
+        supabase.from('users').select('*').then(console.log).catch(console.error);
         // Получение Telegram ID через Telegram WebApp
         const telegram = window.Telegram.WebApp;
         const telegramId = telegram.initDataUnsafe.user?.id;
