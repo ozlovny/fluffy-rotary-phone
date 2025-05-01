@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram App</title>
+    <script type="module">
+        // Импортируем библиотеку Supabase
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        // Инициализация Supabase клиента
+        const supabaseUrl = 'https://drzpzssyfnmcyrftyfeo.supabase.co'; // Вставьте ваш Supabase URL
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyenB6c3N5Zm5tY3lyZnR5ZmVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3NjY5OTAsImV4cCI6MjA2MTM0Mjk5MH0.o2Cem8X4W_H3giAxqf0HqoZFC-v5iIQV2obDmAeQBZ8';        // Вставьте ваш API Key
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // Получение Telegram ID через Telegram WebApp
+        const telegram = window.Telegram.WebApp;
+        const telegramId = telegram.initDataUnsafe.user?.id;
+
+        if (!telegramId) {
+            console.error('Telegram ID не найден. Убедитесь, что приложение запущено внутри Telegram.');
+        } else {
+            console.log(`Telegram ID: ${telegramId}`);
+        }
+
+        // Функция для получения баланса билетов пользователя
+        async function getBalance(telegramId) {
+            const { data, error } = await supabase
+                .from('users')
+                .select('tickets')
+                .eq('telegram_id', telegramId)
+                .single();
+
+            if (error) {
+                console.log('Ошибка получения баланса:', error.message);
+                return 0; // Возвращаем 0, если пользователя нет
+            }
+            return data.tickets;
+        }
+
+        // Функция для добавления билетов пользователю
+        async function addTickets(telegramId, amount) {
+            const { data, error } = await supabase
+                .from('users')
+                .select('tickets')
+                .eq('telegram_id', telegramId)
+                .single();
+
+            if (error && error.code === 'PGRST116') {
+                const { error: insertError } = await supabase
+                    .from('users')
+                    .insert([{ telegram_id: telegramId, tickets: amount }]);
+                if (insertError) {
+                    console.log('Ошибка добавления пользователя:', insertError.message);
+                    return;
+                }
+                console.log('Пользователь создан и добавлено 10 билетов.');
+            } else if (!error) {
+                const newBalance = data.tickets + amount;
+                const { error: updateError } = await supabase
+                    .from('users')
+                    .update({ tickets: newBalance })
+                    .eq('telegram_id', telegramId);
+                if (updateError) {
+                    console.log('Ошибка обновления баланса:', updateError.message);
+                    return;
+                }
+                console.log(`Обновлён баланс: ${newBalance}`);
+            }
+        }
+
+        // Пример использования
+        const balanceElement = document.querySelector('.balance-number');
+
+        // Получаем начальный баланс
+        getBalance(telegramId).then(balance => {
+            balanceElement.textContent = balance; // Обновляем отображение баланса
+        });
+
+        // Добавляем билеты при просмотре рекламы
+        async function addPromoTickets() {
+            await addTickets(telegramId, 10); // Добавляем 10 билетов
+            const newBalance = await getBalance(telegramId);
+            balanceElement.textContent = newBalance; // Обновляем отображение баланса
+        }
+
+        // Подключаем к кнопке
+        document.querySelector('.task-button').addEventListener('click', addPromoTickets);
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #000000; /* Чёрный фон */
+            margin: 0;
+            padding: 0;
+        }
+        .balance-display {
+            margin-top: 50px;
+            color: #ffffff; /* Белый текст */
+        }
+        .balance-number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .task-button {
+            margin: 20px;
+            padding: 15px 30px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="balance-display">
+        <p>Ваш баланс билетов:</p>
+        <span class="balance-number">0</span>
+    </div>
+    <button class="task-button">Посмотреть рекламу и получить 10 билетов</button>
+</body>
+</html>
