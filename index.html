@@ -35,6 +35,7 @@
             cursor: pointer; /* Указатель мыши */
             transition: background-color 0.3s ease; /* Анимация изменения цвета */
             user-select: none; /* Убираем выделение текста при клике */
+            position: relative; /* Для таймера */
         }
 
         .task-button:hover {
@@ -55,14 +56,34 @@
             background-color: #555555; /* Цвет для неактивной кнопки */
             cursor: not-allowed; /* Указатель мыши */
         }
+
+        .timer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #ffffff;
+            display: none; /* Скрываем таймер по умолчанию */
+        }
+
+        .task-button.disabled .timer {
+            display: block; /* Показываем таймер на заблокированной кнопке */
+        }
     </style>
 </head>
 <body>
     <div class="todo-container">
         <!-- Кнопка "Посмотреть рекламу" -->
-        <a onclick="handleButtonClick(this, showAd)" class="task-button">Посмотреть рекламу</a>
+        <a onclick="handleButtonClick(this, showAd)" class="task-button">
+            Посмотреть рекламу
+            <span class="timer"></span>
+        </a>
         <!-- Пример других кнопок -->
-        <a onclick="handleButtonClick(this, addTickets)" class="task-button">Добавить билеты</a>
+        <a onclick="handleButtonClick(this, addTickets)" class="task-button">
+            Добавить билеты
+            <span class="timer"></span>
+        </a>
     </div>
 
     <script>
@@ -79,36 +100,20 @@
             button.classList.add('disabled');
             button.style.pointerEvents = 'none';
 
-            // Включаем кнопку обратно через 10 секунд
-            setTimeout(() => {
-                button.classList.remove('disabled');
-                button.style.pointerEvents = '';
-            }, 10000); // 10 секунд
-        }
+            // Запускаем таймер обратного отсчёта
+            const timerElement = button.querySelector('.timer');
+            let countdown = 10; // 10 секунд
 
-        // Функция для показа рекламы
-        function showAd() {
-            if (typeof show_9286586 === 'function') {
-                show_9286586(); // Выполняем показ рекламы
-            } else {
-                console.error("Функция show_9286586 недоступна.");
-            }
-        }
-
-        // Функция для добавления билетов
-        function addTickets() {
-            // Находим элемент с балансом
-            const balanceElement = document.querySelector('.balance-number');
-            
-            // Получаем текущее значение баланса
-            const currentBalance = parseInt(balanceElement.textContent, 10);
-            
-            // Добавляем 10 к текущему балансу
-            const newBalance = currentBalance + 10;
-            
-            // Обновляем текстовое содержимое с новым балансом
-            balanceElement.textContent = newBalance;
-        }
-    </script>
-</body>
-</html>
+            timerElement.textContent = countdown;
+            const interval = setInterval(() => {
+                countdown--;
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    // Включаем кнопку обратно
+                    button.classList.remove('disabled');
+                    button.style.pointerEvents = '';
+                    timerElement.textContent = '';
+                } else {
+                    timerElement.textContent = countdown; // Обновляем таймер
+                }
+            }, 1000); // Обновляем каждую секунду
