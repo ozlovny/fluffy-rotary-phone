@@ -4,98 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram App</title>
-    <script type="module">
-        // Импортируем библиотеку Supabase
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-        // Инициализация Supabase клиента
-        const supabaseUrl = 'https://drzpzssyfnmcyrftyfeo.supabase.co'; // Вставьте ваш Supabase URL
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyenB6c3N5Zm5tY3lyZnR5ZmVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3NjY5OTAsImV4cCI6MjA2MTM0Mjk5MH0.o2Cem8X4W_H3giAxqf0HqoZFC-v5iIQV2obDmAeQBZ8';        // Вставьте ваш API Key
-        const supabase = createClient(supabaseUrl, supabaseKey);
-
-        supabase.from('users').select('*').then(console.log).catch(console.error);
-        // Получение Telegram ID через Telegram WebApp
-        const telegram = window.Telegram.WebApp;
-        const telegramId = telegram.initDataUnsafe.user?.id;
-
-        if (!telegramId) {
-            console.error('Telegram ID не найден. Убедитесь, что приложение запущено внутри Telegram.');
-        } else {
-            console.log(`Telegram ID: ${telegramId}`);
-        }
-
-        // Функция для получения баланса билетов пользователя
-        async function getBalance(telegramId) {
-            const { data, error } = await supabase
-                .from('users')
-                .select('tickets')
-                .eq('telegram_id', telegramId)
-                .single();
-
-            if (error) {
-                console.log('Ошибка получения баланса:', error.message);
-                return 0; // Возвращаем 0, если пользователя нет
-            }
-            return data.tickets;
-        }
-
-        // Функция для добавления билетов пользователю
-        async function addTickets(telegramId, amount) {
-            const { data, error } = await supabase
-                .from('users')
-                .select('tickets')
-                .eq('telegram_id', telegramId)
-                .single();
-
-            if (error && error.code === 'PGRST116') {
-                const { error: insertError } = await supabase
-                    .from('users')
-                    .insert([{ telegram_id: telegramId, tickets: amount }]);
-                if (insertError) {
-                    console.log('Ошибка добавления пользователя:', insertError.message);
-                    return;
-                }
-                console.log('Пользователь создан и добавлено 10 билетов.');
-            } else if (!error) {
-                const newBalance = data.tickets + amount;
-                const { error: updateError } = await supabase
-                    .from('users')
-                    .update({ tickets: newBalance })
-                    .eq('telegram_id', telegramId);
-                if (updateError) {
-                    console.log('Ошибка обновления баланса:', updateError.message);
-                    return;
-                }
-                console.log(`Обновлён баланс: ${newBalance}`);
-            }
-        }
-
-        // Пример использования
-        const balanceElement = document.querySelector('.balance-number');
-
-        // Получаем начальный баланс
-        getBalance(telegramId).then(balance => {
-            balanceElement.textContent = balance; // Обновляем отображение баланса
-        });
-
-        // Добавляем билеты при просмотре рекламы
-       
-        async function addPromoTickets() {
-    console.log('Кнопка нажата');
-    try {
-        await addTickets(telegramId, 10); // Добавляем 10 билетов
-        const newBalance = await getBalance(telegramId);
-        console.log(`Новый баланс: ${newBalance}`);
-        balanceElement.textContent = newBalance; // Обновляем отображение баланса
-    } catch (error) {
-        console.error('Ошибка при обновлении билетов:', error);
-    }
-            }
-
-        // Подключаем к кнопке
-        document.querySelector('.task-button').addEventListener('click', addPromoTickets);
-    </script>
+    <!-- Добавляем предоставленный скрипт -->
+    <script src='//whephiwums.com/sdk.js' data-zone='9286586' data-sdk='show_9286586'></script>
     <style>
+        button:focus, a:focus {
+            outline: none;
+        }
+
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -103,31 +18,97 @@
             margin: 0;
             padding: 0;
         }
-        .balance-display {
-            margin-top: 50px;
-            color: #ffffff; /* Белый текст */
-        }
-        .balance-number {
-            font-size: 32px;
-            font-weight: bold;
-        }
+
         .task-button {
-            margin: 20px;
-            padding: 15px 30px;
-            background-color: #007bff;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+            display: block;
+            width: 90%; /* Ширина кнопки относительно экрана */
+            max-width: 400px; /* Максимальная ширина кнопки */
+            margin: 10px auto;
+            padding: 20px; /* Высота кнопки */
+            font-size: 18px; /* Размер текста */
+            color: #ffffff; /* Белый текст */
+            background-color: #333333; /* Тёмно-серый фон */
+            border: none; /* Убираем границу */
+            border-radius: 25px; /* Закруглённые углы */
+            text-align: center; /* Центрирование текста */
+            text-decoration: none; /* Убираем подчеркивание (для ссылок) */
+            cursor: pointer; /* Указатель мыши */
+            transition: background-color 0.3s ease; /* Анимация изменения цвета */
+            user-select: none; /* Убираем выделение текста при клике */
+        }
+
+        .task-button:hover {
+            background-color: #444444; /* Цвет при наведении */
+        }
+
+        .task-button:active {
+            background-color: #222222; /* Цвет при нажатии */
+        }
+
+        /* Убираем синюю рамку при клике */
+        .task-button:focus {
+            outline: none;
+            box-shadow: none; /* Убираем возможное свечение */
+        }
+
+        .task-button.disabled {
+            background-color: #555555; /* Цвет для неактивной кнопки */
+            cursor: not-allowed; /* Указатель мыши */
         }
     </style>
 </head>
 <body>
-    <div class="balance-display">
-        <p>Ваш баланс билетов:</p>
-        <span class="balance-number">0</span>
+    <div class="todo-container">
+        <!-- Кнопка "Посмотреть рекламу" -->
+        <a onclick="handleButtonClick(this, showAd)" class="task-button">Посмотреть рекламу</a>
+        <!-- Пример других кнопок -->
+        <a onclick="handleButtonClick(this, addTickets)" class="task-button">Добавить билеты</a>
     </div>
-    <button class="task-button">Посмотреть рекламу и получить 10 билетов</button>
+
+    <script>
+        // Функция для выполнения задержки нажатия
+        function handleButtonClick(button, callback) {
+            if (button.classList.contains('disabled')) {
+                return; // Если кнопка уже отключена, ничего не делаем
+            }
+
+            // Выполняем действие
+            callback();
+
+            // Отключаем кнопку
+            button.classList.add('disabled');
+            button.style.pointerEvents = 'none';
+
+            // Включаем кнопку обратно через 10 секунд
+            setTimeout(() => {
+                button.classList.remove('disabled');
+                button.style.pointerEvents = '';
+            }, 10000); // 10 секунд
+        }
+
+        // Функция для показа рекламы
+        function showAd() {
+            if (typeof show_9286586 === 'function') {
+                show_9286586(); // Выполняем показ рекламы
+            } else {
+                console.error("Функция show_9286586 недоступна.");
+            }
+        }
+
+        // Функция для добавления билетов
+        function addTickets() {
+            // Находим элемент с балансом
+            const balanceElement = document.querySelector('.balance-number');
+            
+            // Получаем текущее значение баланса
+            const currentBalance = parseInt(balanceElement.textContent, 10);
+            
+            // Добавляем 10 к текущему балансу
+            const newBalance = currentBalance + 10;
+            
+            // Обновляем текстовое содержимое с новым балансом
+            balanceElement.textContent = newBalance;
+        }
+    </script>
 </body>
 </html>
