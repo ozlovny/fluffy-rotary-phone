@@ -65,26 +65,27 @@
 
     <div class="todo-container">
         <!-- Кнопка для рекламы от первого поставщика -->
-        <a id="adButtonTMA" class="task-button" onclick="handleTmaAdClick(this)">Посмотреть рекламу (TMA) и получить 10 билетов</a>
+        <a id="adButtonTMA" class="task-button tma-ad-button" onclick="handleTmaAdClick()">Посмотреть рекламу (TMA) и получить 10 билетов</a>
 
         <!-- Кнопка для рекламы от второго поставщика -->
-        <a id="adButtonShow9286586" class="task-button" onclick="handleAdClick(this, showAd)">Посмотреть рекламу (9286586) и получить 10 билетов</a>
+        <a id="adButtonShow9286586" class="task-button show-ad-button" onclick="handleShowAdClick()">Посмотреть рекламу (9286586) и получить 10 билетов</a>
     </div>
 
     <script>
-        // Функция для обработки нажатия на кнопку рекламы TMA с задержкой
-        function handleTmaAdClick(button) {
+        // Обрабатываем кнопку для TMA рекламы
+        function handleTmaAdClick() {
+            const button = document.querySelector('.tma-ad-button');
             if (button.classList.contains('disabled')) {
-                return; // Если кнопка уже отключена, ничего не делаем
+                return; // Если кнопка заблокирована, ничего не делаем
             }
 
-            // Выполняем функционал для TMA рекламы
+            // Выполняем функционал для TMA
             if (window.initCdTma) {
-                window.initCdTma?.({ id: '6072092' }) // Инициализация рекламного менеджера
+                window.initCdTma?.({ id: '6072092' })
                     .then(show => {
                         show(); // Показываем рекламу
                         console.log('TMA реклама показана');
-                        addTickets(); // Добавляем билеты после показа рекламы
+                        addTickets(); // Добавляем билеты после рекламы
                     })
                     .catch(e => console.error('Ошибка показа TMA рекламы:', e));
             } else {
@@ -92,55 +93,48 @@
             }
 
             // Блокируем кнопку
-            startCooldown(button, 10); // Задержка в 10 секунд
+            startCooldown(button, 10); // Задержка 10 секунд
         }
 
-        // Функция для обработки нажатия на кнопку рекламы SDK (show_9286586)
-        function handleAdClick(button, callback) {
+        // Обрабатываем кнопку для рекламы SDK (show_9286586)
+        function handleShowAdClick() {
+            const button = document.querySelector('.show-ad-button');
             if (button.classList.contains('disabled')) {
-                return; // Если кнопка уже отключена, ничего не делаем
+                return; // Если кнопка заблокирована, ничего не делаем
             }
 
-            // Выполняем действие кнопки
-            callback();
-
-            // Блокируем кнопку
-            startCooldown(button, 10); // Задержка в 10 секунд
-        }
-
-        // Функция для показа рекламы SDK (show_9286586)
-        function showAd() {
+            // Выполняем функционал для SDK рекламы
             if (typeof window.show === 'function') {
                 window.show()
                     .then(() => {
                         console.log('Реклама (9286586) показана');
-                        addTickets(); // Добавляем билеты после показа рекламы
+                        addTickets(); // Добавляем билеты после рекламы
                     })
                     .catch(e => console.error('Ошибка показа рекламы (9286586):', e));
             } else {
                 console.error("Функция window.show недоступна.");
             }
+
+            // Блокируем кнопку
+            startCooldown(button, 10); // Задержка 10 секунд
         }
 
         // Функция для добавления билетов
         function addTickets() {
-            // Находим элемент с балансом
             const balanceElement = document.querySelector('.balance-number');
             const currentBalance = parseInt(balanceElement.textContent, 10);
-
-            // Добавляем 10 билетов
-            balanceElement.textContent = currentBalance + 10;
+            balanceElement.textContent = currentBalance + 10; // Увеличиваем баланс на 10
         }
 
-        // Общая функция для запуска таймера задержки и блокировки кнопки
+        // Общая функция для задержки кнопки
         function startCooldown(button, cooldownTime) {
             button.classList.add('disabled');
             button.style.pointerEvents = 'none';
 
-            let cooldown = cooldownTime; // Задержка в секундах
-            const originalText = button.textContent; // Сохраняем оригинальный текст кнопки
+            let cooldown = cooldownTime;
+            const originalText = button.textContent;
 
-            // Обновляем текст кнопки с таймером
+            // Обновляем текст с таймером
             const timer = setInterval(() => {
                 button.textContent = `Подождите ${cooldown} секунд...`;
                 cooldown--;
@@ -149,9 +143,9 @@
                     clearInterval(timer);
                     button.classList.remove('disabled');
                     button.style.pointerEvents = '';
-                    button.textContent = originalText; // Восстанавливаем оригинальный текст
+                    button.textContent = originalText; // Восстанавливаем исходный текст
                 }
-            }, 1000); // Обновление каждую секунду
+            }, 1000); // Обновляем каждую секунду
         }
     </script>
 </body>
