@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram App</title>
-    <!-- Подключение рекламных скриптов -->
+    <!-- Подключение Telegram Web App API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
-    <script src="//whephiwums.com/sdk.js" data-zone="9286586" data-sdk="show_9286586"></script>
     <style>
         button:focus, a:focus {
             outline: none;
@@ -41,20 +39,20 @@
 
         .task-button {
             display: block;
-            width: 90%; /* Ширина кнопки относительно экрана */
-            max-width: 400px; /* Максимальная ширина кнопки */
+            width: 90%;
+            max-width: 400px;
             margin: 10px auto;
-            padding: 20px; /* Высота кнопки */
-            font-size: 18px; /* Размер текста */
-            color: #ffffff; /* Белый текст */
-            background-color: #333333; /* Тёмно-серый фон */
-            border: none; /* Убираем границу */
-            border-radius: 25px; /* Закруглённые углы */
-            text-align: center; /* Центрирование текста */
-            text-decoration: none; /* Убираем подчеркивание (для ссылок) */
-            cursor: pointer; /* Указатель мыши */
-            transition: background-color 0.3s ease; /* Анимация изменения цвета */
-            user-select: none; /* Убираем выделение текста при клике */
+            padding: 20px;
+            font-size: 18px;
+            color: #ffffff;
+            background-color: #333333;
+            border: none;
+            border-radius: 25px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            user-select: none;
         }
 
         .task-button:hover {
@@ -69,13 +67,10 @@
 <body>
     <div class="app-container">
         <div class="balance-display">
-            <div class="balance-content">
-                Баланс: <span id="balance" class="balance-number">0</span> билетов
-            </div>
+            Баланс: <span id="balance" class="balance-number">0</span> билетов
         </div>
         <div class="todo-container">
-            <button id="tmaAdButton" class="task-button">Посмотреть рекламу (TMA) и получить 10 билетов</button>
-            <button id="sdkAdButton" class="task-button">Посмотреть рекламу и получить 10 билетов</button>
+            <button id="addTicketsButton" class="task-button">Добавить 10 билетов</button>
         </div>
     </div>
 
@@ -83,10 +78,10 @@
         // Telegram Web App API
         const tg = window.Telegram.WebApp;
 
-        // Ключ для хранения данных
+        // Ключ для хранения баланса
         const BALANCE_KEY = "user_balance";
 
-        // Функция для загрузки баланса из Telegram Storage
+        // Функция для загрузки баланса
         async function loadBalance() {
             try {
                 const storedBalance = await tg.storage.getItem(BALANCE_KEY);
@@ -104,7 +99,7 @@
             }
         }
 
-        // Функция для сохранения баланса в Telegram Storage
+        // Функция для сохранения баланса
         async function saveBalance(newBalance) {
             try {
                 await tg.storage.setItem(BALANCE_KEY, newBalance.toString());
@@ -127,44 +122,17 @@
             await saveBalance(newBalance);
         }
 
-        // Инициализация кнопок рекламы
+        // Инициализация
         document.addEventListener("DOMContentLoaded", async () => {
-            const balance = await loadBalance(); // Загружаем текущий баланс
+            // Загружаем текущий баланс
+            await loadBalance();
 
-            // Инициализация кнопки TMA рекламы
-            const tmaButton = document.getElementById("tmaAdButton");
-            tmaButton.addEventListener("click", async () => {
-                if (window.initCdTma) {
-                    try {
-                        const ad = await initCdTma({ id: "6072092" }); // Инициализация рекламы
-                        ad(); // Показываем рекламу
-                        console.log("TMA реклама показана");
-                        await addTickets(10); // Добавляем 10 билетов
-                    } catch (error) {
-                        console.error("Ошибка TMA рекламы:", error);
-                    }
-                } else {
-                    console.error("Скрипт TMA не загружен.");
-                }
-            });
-
-            // Инициализация кнопки SDK рекламы
-            const sdkButton = document.getElementById("sdkAdButton");
-            sdkButton.addEventListener("click", async () => {
-                if (typeof show_9286586 === "function") {
-                    try {
-                        await show_9286586(); // Показываем рекламу
-                        console.log("SDK реклама показана");
-                        await addTickets(10); // Добавляем 10 билетов
-                    } catch (error) {
-                        console.error("Ошибка SDK рекламы:", error);
-                    }
-                } else {
-                    console.error("Скрипт SDK не загружен.");
-                }
+            // Обработка нажатия на кнопку добавления билетов
+            const addTicketsButton = document.getElementById("addTicketsButton");
+            addTicketsButton.addEventListener("click", async () => {
+                await addTickets(10); // Добавляем 10 билетов
             });
         });
     </script>
 </body>
 </html>
-<!--лох-->
