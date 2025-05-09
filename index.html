@@ -1,138 +1,240 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram App</title>
-    <!-- Подключение Telegram Web App API -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        button:focus, a:focus {
-            outline: none;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blurred Card</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+ /* Контейнер для карточек */
+    .card-container {
+      display: flex; /* Flexbox для расположения карточек */
+      flex-wrap: wrap; /* Позволяет переносить карточки на новую строку */
+      gap: 20px; /* Расстояние между карточками */
+      justify-content: center; /* Центрирование карточек */
+      max-width: 400px; /* Ограничение ширины контейнера */
+    }
+ .top-bar {
+      position: fixed; /* Зафиксировано сверху */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background: rgba(34, 34, 34, 0.9); /* Полупрозрачный фон */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      z-index: 1000; /* Поверх всех элементов */
+      color: #fff;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #000000; /* Чёрный фон */
-            margin: 0;
-            padding: 0;
-        }
+    .card {
+      position: relative;
+      width: 170px; /* Увеличен размер карточки для картинки */
+      height: 200px;
+      background: #6DCFF6;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
 
-        .balance-display {
+    .card-image {
+      position: absolute; /* Позволяет двигать изображение */
+      width: 200px; /* Начальная ширина */
+      height: 210px; /* Автоматический расчет высоты */
+      top: 50%; /* Центрирование по вертикали */
+      left: 50%; /* Центрирование по горизонтали */
+      transform: translate(-50%, -50%); /* Центрирование относительно своего центра */
+    }
+      
+    
+
+    .corner-label {
+  position: absolute; /* Элемент расположен относительно карточки */
+  top: 67px; /* Отступ сверху */
+  right: -27px; /* Отступ справа, можно подвинуть */
+  background-color: rgba(255, 255, 255, 0.3); /* Прозрачный фон */
+  color: white; /* Цвет текста */
+  padding: 5px 10px; /* Внутренние отступы */
+  font-size: 12px; /* Размер текста */
+  font-weight: bold; /* Жирный текст */
+  border-top-right-radius: 10px; /* Скругление углов */
+  border-bottom-left-radius: 10px; /* Скругление углов */
+  transform: rotate(45deg); /* Наклон элемента */
+  transform-origin: top right; /* Точка поворота */
+  width: 110px; /* Ширина */
+  text-align: center; /* Выравнивание текста по центру */
+  z-index: 3; /* Расположение поверх других элементов */
+  backdrop-filter: blur(4px); /* Эффект размытия фона */
+      -webkit-backdrop-filter: blur(5px); /* Для поддержки в Safari */
+}
+
+    .price {
+      position: absolute;
+      bottom: 15px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 70px;
+      display: flex;
+      align-items: center;
+    }
+
+    .price span:first-child {
+      margin-right: 5px;
+      color: gold;
+    }
+  
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(34, 34, 34, 0.7); /* Полупрозрачный фон */
+            backdrop-filter: blur(2px); /* Эффект размытия */
             display: flex;
-            justify-content: center;
+            justify-content: space-around;
             align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5);
+        }
+        .button {
+            display: flex;
             flex-direction: column;
-            position: relative;
-            margin-top: 50px;
-            padding: 10px;
-            font-size: 24px;
+            align-items: center;
             text-align: center;
-            color: #ffffff; /* Белый текст */
-        }
-
-        .balance-number {
-            font-size: 32px;
-            font-weight: bold;
-        }
-
-        .task-button {
-            display: block;
-            width: 90%;
-            max-width: 400px;
-            margin: 10px auto;
-            padding: 20px;
-            font-size: 18px;
-            color: #ffffff;
-            background-color: #333333;
-            border: none;
-            border-radius: 25px;
-            text-align: center;
+            color: #fff;
             text-decoration: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            user-select: none;
         }
 
-        .task-button:hover {
-            background-color: #444444;
+        .button img {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 5px;
         }
 
-        .task-button:active {
-            background-color: #222222;
+        .button span {
+            font-size: 12px;
         }
-    </style>
+  .balance {
+      font-size: 16px;
+    }
+    .connect-wallet {
+      background-color: #6DCFF6;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 10px;
+      color: #121212;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      position: relative; /* Для управления положением */
+      left: -25px; /* Начальное смещение по горизонтали */
+    }
+
+    .connect-wallet:hover {
+      background-color: #5BB4D6;
+    }
+  </style>
+  <script>
+    document.getElementById('clickable-card').addEventListener('click', function() {
+      // Задаем ссылку, которая откроется при клике
+      window.open('https://example.com', '_blank');
+    });
+  </script>
 </head>
 <body>
-    <div class="app-container">
-        <div class="balance-display">
-            Баланс: <span id="balance" class="balance-number">0</span> билетов
-        </div>
-        <div class="todo-container">
-            <button id="addTicketsButton" class="task-button">Добавить 10 билетов</button>
-        </div>
+  <div class="top-bar">
+    <div class="balance" id="balance">Баланс: 0 TON</div>
+    <button class="connect-wallet" id="connectWalletButton">Подключить кошелек</button>
+  </div>
+  <div class="card-container">
+    <!-- Первая карточка -->
+    <div class="card">
+      <div class="corner-label">#8,525</div>
+      <a href="https://t.me/nft/DeskCalendar-8525" target="_blank">
+        <img src="calendar_8525.png" alt="Calendar" class="card-image">
+      </a>
+      <div class="price">
+        <span>0,69</span>
+        <span>ton</span>
+      </div>
     </div>
-
-    <script>
-        // Telegram Web App API
-        const tg = window.Telegram.WebApp;
-
-        // Ключ для хранения баланса
-        const BALANCE_KEY = "user_balance";
-
-        // Функция для загрузки баланса
-        async function loadBalance() {
-            try {
-                const storedBalance = await tg.storage.getItem(BALANCE_KEY);
-                const balance = storedBalance ? parseInt(storedBalance, 10) : 0;
-
-                // Обновляем отображение баланса
-                const balanceElement = document.getElementById("balance");
-                balanceElement.textContent = balance;
-
-                console.log("Баланс загружен:", balance);
-                return balance;
-            } catch (error) {
-                console.error("Ошибка при загрузке баланса:", error);
-                return 0;
-            }
-        }
-
-        // Функция для сохранения баланса
-        async function saveBalance(newBalance) {
-            try {
-                await tg.storage.setItem(BALANCE_KEY, newBalance.toString());
-                console.log("Баланс сохранён:", newBalance);
-            } catch (error) {
-                console.error("Ошибка при сохранении баланса:", error);
-            }
-        }
-
-        // Функция для добавления билетов
-        async function addTickets(amount) {
-            const balanceElement = document.getElementById("balance");
-            const currentBalance = parseInt(balanceElement.textContent, 10) || 0;
-
-            // Увеличиваем баланс
-            const newBalance = currentBalance + amount;
-            balanceElement.textContent = newBalance;
-
-            // Сохраняем новый баланс
-            await saveBalance(newBalance);
-        }
-
-        // Инициализация
-        document.addEventListener("DOMContentLoaded", async () => {
-            // Загружаем текущий баланс
-            await loadBalance();
-
-            // Обработка нажатия на кнопку добавления билетов
-            const addTicketsButton = document.getElementById("addTicketsButton");
-            addTicketsButton.addEventListener("click", async () => {
-                await addTickets(10); // Добавляем 10 билетов
-            });
-        });
-    </script>
+    
+    <!-- Вторая карточка -->
+    <div class="card">
+      <div class="corner-label">#55,347</div>
+      <a href="https://t.me/nft/DeskCalendar-55347" target="_blank">
+        <img src="calendar_55347.png" alt="Calendar" class="card-image">
+      </a>
+      <div class="price">
+        <span>0,7</span>
+        <span>ton</span>
+      </div>
+    </div>
+    
+    <!-- Третья карточка -->
+    <div class="card">
+      <div class="corner-label">#309,139</div>
+      <a href="https://t.me/nft/DeskCalendar-309139" target="_blank">
+        <img src="calendar_309139.png" alt="Calendar" class="card-image">
+      </a>
+      <div class="price">
+        <span>0,75</span>
+        <span>ton</span>
+      </div>
+    </div>
+        <div class="card">
+      <div class="corner-label">#1</div>
+      <a href="https://t.me/nft/DeskCalendar-1" target="_blank">
+        <img src="calendar_1.png" alt="Calendar" class="card-image">
+      </a>
+      <div class="price">
+        <span>0,75</span>
+        <span>ton</span>
+      </div>
+    </div>
+    
+    <!-- Четвёртая карточка -->
+    <div class="card">
+      <div class="corner-label">#1,000</div>
+      <a href="https://t.me/nft/DeskCalendar-1000" target="_blank">
+        <img src="calendar_1000.png" alt="Calendar" class="card-image">
+      </a>
+      <div class="price">
+        <span>0,8</span>
+        <span>ton</span>
+      </div>
+          
+  </div>
+    </div>
+  </div>
+  </body>   
+    </div>
+        <div class="bottom-bar">
+            <div class="button" onclick="showScene('tasks')">
+            <img src="task.png" alt="Icon 1">
+            <span>рынок</span>
+            </div>
+        <div class="button" onclick="showScene('profile')">
+            <img src="profile.png" alt="Icon 3">
+            <span>профиль</span>
+        </div>
+        </div>
 </body>
 </html>
